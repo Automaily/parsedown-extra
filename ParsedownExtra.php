@@ -30,6 +30,7 @@ class ParsedownExtra extends Parsedown
 
         $this->BlockTypes[':'] []= 'DefinitionList';
         $this->BlockTypes['*'] []= 'Abbreviation';
+        $this->InlineTypes['~'] []= 'Button';
 
         # identify footnote definitions before reference definitions
         array_unshift($this->BlockTypes['['], 'Footnote');
@@ -82,6 +83,40 @@ class ParsedownExtra extends Parsedown
         }
     }
 
+    #
+    # Button
+
+    protected function inlineButton($Excerpt)
+    {
+        if ( ! isset($Excerpt['text'][1]) or $Excerpt['text'][1] !== '[')
+        {
+            return;
+        }
+        $Excerpt['text']= substr($Excerpt['text'], 1);
+
+        $Link = $this->inlineLink($Excerpt);
+        if ($Link === null)
+        {
+            return;
+        }
+        $Inline = array(
+            'extent' => $Link['extent'] + 1,
+            'element' => array(
+                'name' => 'a',
+                'text' => $Link['element']['handler']['argument'],
+                'attributes' => array(
+                    'href' => $Link['element']['attributes']['href'],
+                    'class' => 'button',
+                ),
+            ),
+        );
+
+        $Inline['element']['attributes'] += $Link['element']['attributes'];
+
+        unset($Inline['element']['attributes']['href']);
+
+        return $Inline;
+    }
     #
     # Footnote
 
