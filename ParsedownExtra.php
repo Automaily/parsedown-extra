@@ -30,7 +30,9 @@ class ParsedownExtra extends Parsedown
 
         $this->BlockTypes[':'] []= 'DefinitionList';
         $this->BlockTypes['*'] []= 'Abbreviation';
+        $this->BlockTypes['^'] []= 'Abbreviation';
         $this->InlineTypes['~'] []= 'Button';
+
 
         # identify footnote definitions before reference definitions
         array_unshift($this->BlockTypes['['], 'Footnote');
@@ -82,10 +84,6 @@ class ParsedownExtra extends Parsedown
             return $Block;
         }
     }
-
-    #
-    # Button
-
     protected function inlineButton($Excerpt)
     {
         if ( ! isset($Excerpt['text'][1]) or $Excerpt['text'][1] !== '[')
@@ -103,7 +101,7 @@ class ParsedownExtra extends Parsedown
             'extent' => $Link['extent'] + 1,
             'element' => array(
                 'name' => 'a',
-                'text' => $Link['element']['handler']['argument'],
+                'text' => $Link['element']['text'],
                 'attributes' => array(
                     'href' => $Link['element']['attributes']['href'],
                     'class' => 'button',
@@ -348,6 +346,9 @@ class ParsedownExtra extends Parsedown
 
         return $Link;
     }
+    #
+    # Link
+
 
     #
     # ~
@@ -558,4 +559,8 @@ class ParsedownExtra extends Parsedown
     #
 
     protected $regexAttribute = '(?:[#.][-\w]+[ ]*)';
+
+    protected $specialCharacters = array(
+        '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|', '~'
+    );
 }
