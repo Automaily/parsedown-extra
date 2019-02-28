@@ -110,9 +110,7 @@ class ParsedownExtra extends Parsedown
         );
 
         $Inline['element']['attributes'] += $Link['element']['attributes'];
-
-        unset($Inline['element']['attributes']['href']);
-
+        
         return $Inline;
     }
     #
